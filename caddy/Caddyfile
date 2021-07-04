@@ -1,0 +1,6 @@
+your.registry.com {
+    tls your.email@your.registry.com
+    proxy /v2 registry:5000 {
+	    transparent
+    }
+}

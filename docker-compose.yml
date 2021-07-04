@@ -1,0 +1,34 @@
+version: '3.3'
+services:  
+  registry:
+    restart: always
+    logging: 
+        driver: "json-file"
+        options:
+            max-size: "50m"
+    image: registry:2
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    volumes:
+      - ./registry/data:/var/lib/registry
+      - ./registry/htpasswd:/auth/htpasswd
+  
+  caddy:
+    restart: always
+    volumes:
+     - ./caddy/Caddyfile:/etc/Caddyfile
+     - ./caddy/data:/root/.caddy 
+    ports:
+     - 80:80
+     - 443:443
+    image: abiosoft/caddy
+    environment: 
+      ACME_AGREE: "true"
+    logging: 
+        driver: "json-file"
+        options:
+            max-size: "50m"
+    links:
+     - registry
